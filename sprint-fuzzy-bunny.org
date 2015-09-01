@@ -1,0 +1,305 @@
+#+TITLE:  Sprint: Fuzzy Bunny
+#+AUTHOR: Howard Abrams
+#+EMAIL:  howard.abrams@gmail.com
+#+DATE:   2015-08-30
+
+Notes and resolution of work issues during the 'Fuzzy Bunny' sprint.
+
+* Work Issues
+
+** Extend Project Scope with Lint Checking | [[blah1][WC-152]]
+
+   After researching many alternatives, including:
+   - [[http://www.pylint.org][Pylint]] :: Individual's can customize errors and conventions.
+   - [[http://pychecker.sourceforge.net][PyChecker]] :: hasn't been updated in years. Issue?
+   - [[https://pypi.python.org/pypi/pep8][Pep8]] :: Guido's original style guide.
+   - [[https://flake8.readthedocs.org/en/2.3.0/][Flake8]] :: Integrate both =pep8= /and/ =pyflakes=.
+
+   Since it wraps pep8 as well as [[https://pypi.python.org/pypi/pyflakes][pyflakes]] error checking library,
+   I’m sure that *Flake8* library should be sufficient for us.
+   Install it in a virtual environment with:
+
+   #+BEGIN_SRC sh :exports code
+     pyenv virtualenv demo
+     pyenv activate demo
+     pip install --upgrade flake8
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   Collecting virtualenv
+     Using cached virtualenv-13.1.0-py2.py3-none-any.whl
+   Installing collected packages: virtualenv
+   Successfully installed virtualenv-13.1.0
+   Collecting flake8
+     Using cached flake8-2.4.1-py2.py3-none-any.whl
+   Collecting pyflakes<0.9,>=0.8.1 (from flake8)
+     Using cached pyflakes-0.8.1-py2.py3-none-any.whl
+   Collecting pep8!=1.6.0,!=1.6.1,!=1.6.2,>=1.5.7 (from flake8)
+     Using cached pep8-1.5.7-py2.py3-none-any.whl
+   Collecting mccabe<0.4,>=0.2.1 (from flake8)
+     Using cached mccabe-0.3.1-py2.py3-none-any.whl
+   Installing collected packages: pyflakes, pep8, mccabe, flake8
+   Successfully installed flake8-2.4.1 mccabe-0.3.1 pep8-1.5.7 pyflakes-0.8.1
+   #+end_example
+
+   When I run the =flake8= executable on our current Reporter
+   project, I get the following warnings:
+
+   #+BEGIN_SRC sh :dir Reporter :exports both
+     flake8 --exit-zero reporter.py
+   #+END_SRC
+
+   #+RESULTS:
+   : reporter.py:18:1: E302 expected 2 blank lines, found 1
+   : reporter.py:49:80: E501 line too long (80 > 79 characters)
+   : reporter.py:53:80: E501 line too long (85 > 79 characters)
+   : reporter.py:57:80: E501 line too long (86 > 79 characters)
+   : reporter.py:61:80: E501 line too long (85 > 79 characters)
+   : reporter.py:83:19: E711 comparison to None should be 'if cond is not None:'
+   : reporter.py:87:80: E501 line too long (88 > 79 characters)
+
+** Create a Setup File for Better Installation | [[blah1][WC-134]]
+
+   To package the Reporter module as a package, we need to create a
+   =setup.py= that imports the =setup= function:
+
+   #+BEGIN_SRC python :tangle Reporter/setup.py
+     from setuptools import setup
+
+     setup(name='Reporter',
+           version='1.0',
+           description='Helper instance for dealing with Nagios',
+           author='Howard Abrams',
+           author_email='howard.abrams@gmail.com',
+           py_modules=['reporter'])
+   #+END_SRC
+
+*** Verify the Installable Archive
+    :PROPERTIES:
+    :dir:      Reporter
+    :END:
+
+    With the source code for the =Reporter= project, we build the
+    [[https://docs.python.org/2/distutils/sourcedist.html][archive distribution archive]]:
+
+    #+BEGIN_SRC sh
+      python setup.py sdist
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    running sdist
+    running egg_info
+    writing Reporter.egg-info/PKG-INFO
+    writing top-level names to Reporter.egg-info/top_level.txt
+    writing dependency_links to Reporter.egg-info/dependency_links.txt
+    reading manifest file 'Reporter.egg-info/SOURCES.txt'
+    writing manifest file 'Reporter.egg-info/SOURCES.txt'
+    running check
+    creating Reporter-1.0
+    creating Reporter-1.0/Reporter.egg-info
+    making hard links in Reporter-1.0...
+    hard linking reporter.py -> Reporter-1.0
+    hard linking setup.py -> Reporter-1.0
+    hard linking Reporter.egg-info/PKG-INFO -> Reporter-1.0/Reporter.egg-info
+    hard linking Reporter.egg-info/SOURCES.txt -> Reporter-1.0/Reporter.egg-info
+    hard linking Reporter.egg-info/dependency_links.txt -> Reporter-1.0/Reporter.egg-info
+    hard linking Reporter.egg-info/pbr.json -> Reporter-1.0/Reporter.egg-info
+    hard linking Reporter.egg-info/top_level.txt -> Reporter-1.0/Reporter.egg-info
+    Writing Reporter-1.0/setup.cfg
+    Creating tar archive
+    removing 'Reporter-1.0' (and everything under it)
+#+end_example
+
+    Odd that the name of the archive isn’t actually displayed in
+    the output of the =sdist= command.  The archive is the file in
+    =dist= directory that matches the version we specified in the
+    =setup.py= file.
+
+    #+NAME: tar-archive
+    #+BEGIN_SRC sh
+     ls dist
+    #+END_SRC
+
+    #+RESULTS: tar-archive
+    : Reporter-1.0.tar.gz
+
+    The archive contains the following files:
+
+    #+NAME: contents
+    #+BEGIN_SRC sh :var ZIP=tar-archive :results table
+      tar -tzf dist/$ZIP
+    #+END_SRC
+
+    #+RESULTS: contents
+    | Reporter-1.0/                                       |
+    | Reporter-1.0/PKG-INFO                               |
+    | Reporter-1.0/Reporter.egg-info/                     |
+    | Reporter-1.0/Reporter.egg-info/dependency_links.txt |
+    | Reporter-1.0/Reporter.egg-info/pbr.json             |
+    | Reporter-1.0/Reporter.egg-info/PKG-INFO             |
+    | Reporter-1.0/Reporter.egg-info/SOURCES.txt          |
+    | Reporter-1.0/Reporter.egg-info/top_level.txt        |
+    | Reporter-1.0/reporter.py                            |
+    | Reporter-1.0/setup.cfg                              |
+    | Reporter-1.0/setup.py                               |
+
+    The contents of the generated, =PKG-INFO=, show that we are
+    missing some fields in our =setup.py= that we will want to describe:
+
+    #+BEGIN_SRC sh :var ZIP=tar-archive CFG=contents[1,0]
+    tar -xOzf dist/$ZIP $CFG
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    Metadata-Version: 1.0
+    Name: Reporter
+    Version: 1.0
+    Summary: Helper instance for dealing with Nagios
+    Home-page: UNKNOWN
+    Author: Howard Abrams
+    Author-email: howard.abrams@gmail.com
+    License: UNKNOWN
+    Description: UNKNOWN
+    Platform: UNKNOWN
+    #+end_example
+
+** Set up a Chef Server for Deployment | [[blah1][WC-181]]
+
+*** Install Chef Binaries
+*** Upload Cookbooks
+*** Connect the Clients
+
+** Deploy the Project Application | [[blah1][WC-182]]
+
+*** Install Python Server
+    :PROPERTIES:
+    :dir:      /minecraft.howardabrams.com:
+    :END:
+
+    Need to make sure that the correct version of Python is installed
+    on the server, but I suspected that we had already installed it.
+
+    All of the following commands are executed on our deployment
+    server, =minecraft.howardabrams.com=. Do we need to fix it so that
+    it knows about its FQDN? I only get the hostname
+    when I run:
+
+    #+BEGIN_SRC sh
+      hostname --long
+    #+END_SRC
+
+    #+RESULTS:
+    : minecraft
+
+    Here is the list of currently installed, python-related packages
+    on the server:
+
+    #+BEGIN_SRC sh :results value list :post column1(data=*this*)
+      sudo dpkg --get-selections | grep -v deinstall | egrep -i '^python\b'
+    #+END_SRC
+
+    #+RESULTS:
+    - python
+    - python-apt
+    - python-apt-common
+    - python-chardet
+    - python-cheetah
+    - python-configobj
+    - python-debian
+    - python-gdbm
+    - python-json-pointer
+    - python-jsonpatch
+    - python-minimal
+    - python-oauth
+    - python-openssl
+    - python-pam
+    - python-pkg-resources
+    - python-prettytable
+    - python-requests
+    - python-serial
+    - python-six
+    - python-twisted-bin
+    - python-twisted-core
+    - python-urllib3
+    - python-xapian
+    - python-yaml
+    - python-zope.interface
+
+    #+NAME: column1
+    #+BEGIN_SRC elisp :var data="" :results value
+      (mapcar 'car data)
+    #+END_SRC
+
+    Called =dpkg= to get the list of currently installed,
+    python-related packages on the server:
+
+    #+HEADER: :post column1(data=table-filter(data=*this*, include="^python", exclude="deinstall"))
+    #+BEGIN_SRC sh :results value list
+      dpkg --get-selections
+    #+END_SRC
+
+    #+RESULTS:
+    - python
+    - python-apt
+    - python-apt-common
+    - python-chardet
+    - python-cheetah
+    - python-configobj
+    - python-debian
+    - python-gdbm
+    - python-json-pointer
+    - python-jsonpatch
+    - python-minimal
+    - python-oauth
+    - python-openssl
+    - python-pam
+    - python-pkg-resources
+    - python-prettytable
+    - python-requests
+    - python-serial
+    - python-six
+    - python-twisted-bin
+    - python-twisted-core
+    - python-urllib3
+    - python-xapian
+    - python-yaml
+    - python-zope.interface
+    - python2.7
+    - python2.7-minimal
+    - python3
+    - python3-apport
+    - python3-apt
+    - python3-commandnotfound
+    - python3-dbus
+    - python3-distupgrade
+    - python3-gdbm:amd64
+    - python3-gi
+    - python3-minimal
+    - python3-newt
+    - python3-problem-report
+    - python3-pycurl
+    - python3-software-properties
+    - python3-update-manager
+    - python3.4
+    - python3.4-minimal
+
+*** Install Apache with WSGI
+
+** Create Local Dev Environment with Docker | [[blah1][WC-195]]
+
+* Meeting Notes
+
+* Daily Scrum Status
+
+* Sprint Demonstration
+
+* Notes for Next Sprint
+
+#+PROPERTY:    results output replace
+#+PROPERTY:    tangle no
+#+PROPERTY:    eval no-export
+#+PROPERTY:    comments org
+#+OPTIONS:     num:nil toc:nil todo:nil tasks:nil tags:nil skip:nil author:nil email:nil creator:nil timestamp:nil

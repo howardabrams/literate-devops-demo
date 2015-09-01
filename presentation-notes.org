@@ -1,0 +1,478 @@
+#+TITLE:  Presentation Notes
+#+AUTHOR: Howard Abrams
+#+EMAIL:  howard.abrams@gmail.com
+#+DATE:   2015 Aug 14
+#+TAGS:   emacs
+#+STARTUP: showall
+
+  In this screen cast I will demonstrate some built in features of Emacs
+  The combination of them, I like to call Literate Devops
+
+  This is based on the concept of /literate programming/.
+
+* Literate Programming
+
+  In case you are unfamiliar with the term,
+  One of the great demigods of the Mesozoic era of computerdom,
+
+  *Donald Knuth* came up an idea of inverting
+  the typical style of “code” that is peppered with comments,
+  with prose punctuated with code.
+
+  While he had developed a special format,
+  we can think of a markdown file where the emphasis is
+  the surrounding description.
+  Perhaps this shift is purely philosophical...
+
+  He wrote that his approach worked well for personal clarity
+  on complicated algorithms,
+  but the emphasis on communication to the other members of my team
+  intrigued me.
+
+* Literate Programming
+
+  While rendering PDFs or web pages from a Markdown file is pretty easy,
+  it could also be possible to extract the code.
+
+  However, I really didn’t get interested in literate programming
+  until I ran into org-mode.
+
+* Org Mode
+
+  Like you, I love org-mode. Strange to say, but it definitely changed my life.
+
+  When Carsten Dominik originally started on developing org-mode,
+  he was interested in formatting and organizing his notes.
+  However, the Babel extension added literate programming features
+  far better than anything Knuth dreamed.
+
+  With Emacs, you actually execute code blocks right from within the document,
+  and each block can be written in different languages.
+  I started dabbling in it, especially when I started writing large
+  Clojure applications.
+
+* Literate Devops
+
+  Once upon a time, after my project was canned,
+  I found myself in unfamiliar territory writing code with a devops team
+  building a private cloud project.
+  Taking judicious notes in org-mode really saved my sanity.
+
+  I realized while configuring a server, if I took notes on each step,
+  not only could I reproduce those steps for a Chef cookbook,
+  but if I got stuck, I could just email the team my notes,
+  and this would include the complete context and background.
+
+  Once I started running code blocks on remote servers with Tramp,
+  I started calling my modified approach, literate devops.
+
+* Demonstration
+
+  However, I believe the only way to describe this method is to
+  demonstrate one of my typical “days”.
+
+* Warning
+
+  For this screen cast, I wanted to use realistic examples and not
+  just a bunch of lorem ipsum. However,
+
+  I also didn’t want you to have to wait for me to fat-finger my way
+  to frustration.
+
+  So I am using my demo-it project to help type each step.
+
+  I will also use some features to high light parts of the code.
+  I use this a lot in pair programming, and it works well for demos.
+
+  In my previous screen casts, people ask some auxiliary questions
+  about my Emacs setup.
+  I use two packages to make my org-mode files look more like a word
+  processor and less like a field of dancing rainbow ponies.
+
+* Let’s Go
+
+  At the beginning of each Sprint iteration, I create a new org-mode
+  file. So, let me just create one.
+
+                  *C-x C-f to create the sprint file*
+
+  I use =auto-insert= to automatically insert section headers
+  that I’ll use throughout the sprint.
+
+  Much of my org-capture templates expect these headers.
+
+  My next step is copy the Sprint stories and tasks from my company’s
+  project management system, so let’s grab those as sub-headings:
+
+                     *M-x org-jira-sprint-stories*
+
+  I shrunk the font so you can better see the sprint file’s
+  organization, so let me just increase it.
+
+* Example: Python Lint
+
+  Finally, it is time to work. And for my first task, I need to do
+  some investigation on different linting technologies for Python, so
+  I start to take notes...
+
+                         *Type some goodness*
+
+  And copy and paste URLs as org-mode hyperlinks. I now have a habit
+  of typing my org-mode files in past tense, for I find that I often
+  want to pause my work to synchronize with my team members.
+
+  I can use Magnar’s fabulous =expand region= project to quickly
+  select what I wrote.
+
+                       *C-= to select the text*
+
+  While org-mode has lots of ways of exporting contents to other
+  formats, in the =org-contrib-plus= project is a function to help
+  mail it. I’ve bound it to C-x capital M, and I really find the
+  results helpful.
+
+                               *C-x M*
+
+  I only selected a small amount of my org-mode file to mail,
+  because I wanted you to be able to see
+  Both of the two mime “alternate” sections.
+
+  The first one is the text format that is the actual org-mode file.
+  Good for team mates that use Emacs.
+  The second section is an HTML version that renders well
+  in all those new fangled mail readers.
+
+  This is the crux of my thesis. While I take notes for myself, I know
+  that I will be communicating them to my team (at least partly).
+
+  I don’t want to bother my team during this demonstration, so I’ll
+  just cancel this.
+
+                    *C-c C-k: to cancel the email*
+
+  My advice when taking your own notes is to emphasize team communication
+  Like easily high-lighting sections of your code and using the htmlize
+  function to email it.
+  I find when I write in the past tense, I don’t have to re-edit before mailing
+
+  The rest of my demonstration will be showing various org-mode tricks
+  and tips to keep the prose and source code blocks clean.
+
+  Let me show you what I mean.
+
+    *C-x b: To switch back to buffer and start putting in code block*
+
+  Assuming that my team and I have settled on the linting strategy,
+  let’s actually write how to install it.
+
+  While my example is real, don’t let the example distract you from
+  the concept.
+
+  Normally, when I do weird stuff to either a Python or a Ruby system
+  (like installing some package), I do it in a virtual environment.
+  So let me write the commands to create one for this project.
+
+  If I type greater-than s and hit tab, it is an org-mode shortcut to
+  create a code block.
+
+                        *Tab to expand the block*
+
+  I’m going to specify that this is a block of code for the shell,
+  and start typing the commands (or copy/pasting from Stack Overflow)
+
+                           *Type code*
+
+  If I hit C-c C-c twice *inside* a code block, it executes the code,
+  in the shell, on my local system.
+
+                    *C-c C-c: To execute the code*
+
+  However, in this case, the results of running this block of code
+  will not be interesting to my team mates, so I’m going to note,
+  as a header argument
+  That when I export this, I only want to export the code, not the output.
+
+  Let’s continue by actually trying to run the lint program on my
+  team’s project code.
+
+                *Tab: For next code block, enter code*
+
+  Once again, I hit C-c C-c twice either on the header or inside the
+  code block, I attempt to execute it.
+
+                          *C-c C-c: Run it!*
+
+  While the lint process ran, it couldn’t find my code. That is to be
+  expected, as I will need to specify the directory where the program can
+  be found.
+
+                     *Enter the local directory*
+
+  Now I *could* just type a =cd= command right in the code block.
+  But this is specific to my environment, and not something to export
+  to my team mates.
+
+                 *Delete and use the :dir parameter*
+
+  So, instead I will specify the directory as a header.
+  If I export it, my team mates will just see the linting command.
+
+  Let’s re-run it and see if it works:
+
+                              *C-c C-c*
+
+  That’s better. In this case, when I send this to my team mates,
+  I will want both the code and the output.
+
+* Example: Creating a Python Script
+
+  I think this story is good enough. Let’s move on to the next story.
+
+                     *Enter text in next section*
+
+  This story is about creating a Python file.
+  Sometimes, I will start a file off in my org-mode
+
+                        *Type source code*
+
+  But I wanted to demonstrate two features:
+  First, I can specify multiple languages in the same org-mode file
+
+                       *Add :tangle parameter*
+
+  Second, that I can use the =tangle= header to specify a file
+  where this source code block can be written.
+
+  I never leave the code in org-mode, as I need to place it under
+  source code control.
+
+* Example: Archive Analysis
+
+  Let’s move on to the next story.
+
+  You’ll notice that my org-mode Sprint file is, well, large and complicated.
+  So, for this next story, I’m going to narrow the story to just this section.
+  This is done with C-x n s
+
+                *C-x n s: Then insert next paragraph*
+
+  Alright, let’s get busy on this story. In this particular example,
+  giving the *sdist* option to my =setup.py= file, will create a tar archive.
+  Let’s do another C-c C-c to execute it.
+
+                              *C-c C-c*
+
+  Huh ... the actual name of the tar file isn’t printed in the output.
+  So this output is not only of little use to my team mates, it isn’t much use to me.
+  Hitting the tab key on this header part, collapses and hides this clutter.
+
+                    *Tab: To collapse the results*
+
+  I know, that during this header section, I will need all
+  code blocks to run in my Project’s directory.
+
+                 *M-s h r: To highlight the dir line*
+
+  I don’t want to have to specify it with every block.
+  I’m going to move it as a Section Property, using C-c C-x p
+
+                   *C-c C-x p: Enter :dir Reporter*
+
+  Now, every code block *in this section of the org-mode file*
+  will run in my project directory.
+
+                        *Enter next paragraph*
+
+  Now, I want to analyze the tar file, so, just like I would at a terminal,
+  I will get a directory listing to see what tar file was created.
+
+                              *C-c C-c*
+
+  Great. But I might want to use that file name, and I don’t want to type it.
+
+  So, I’m going to *name* this code block.
+
+                     *Enter #+NAME: tar-archive*
+
+  Now, when I run it with C-c C-c
+
+                              *C-c C-c*
+
+  The results are named as well. This name can be use as a variable in
+  another block.
+
+                        *M-s h r: tar-archive*
+
+  Notice this label, tar-archive, creates a thread of
+  data generation and usage.
+  I create a shell variable, ZIP that refers to the org-mode name, tar-archive
+
+  Here I will run the =tar= command to see what is in my tar file.
+
+                              *C-c C-c*
+
+  That is more files that what I created. Some of these must be generated.
+  Once again, I’m going to name this code block,
+
+                           *Enter headers*
+
+  But I’m also going to change the results from just a pre block output
+  to a table listing.
+
+                              *C-c C-c*
+
+  Now, the contents are on individual rows, and I can access them as a variable.
+
+  Here, I create two shell variables, ZIP and CFG. The CFG variable
+  specifies the table, but I’m going to reference a single cell in
+  that table.
+
+  The first parameter specifies the row and
+  the second parameter specifies the first column.
+  Yeah, everything is 0-based.
+
+  Let’s just run it with a C-c C-c
+
+                              *C-c C-c*
+
+  And there is the contents of the generated file.
+
+  I should note here that I sometimes re-run these blocks of commands
+  in my org-mode file instead of putting these commands as script files.
+  Obviously, if something turns really interesting, I don’t,
+
+  but Some command sequences live between being completely transient
+  (like what happens when you type commands into a terminal)
+  And living prominently in a script file.
+
+  (whew)
+
+* Example: Installing Python on Remote Server
+
+
+  Everything I’ve shown so far could be considered literate
+  programming for shell script enthusiasts.
+  Now I want to show the features that make this more devops.
+
+  I widened my org-mode file to see my accomplishments.
+  with C-x n w (in case you didn’t know that keybinding)
+
+  I’m going to hit Shift Tab twice so that I can see just the headings.
+
+                              *C-x n w*
+                              *Tab Tab*
+
+  I’m going to jump to this one task in my sprint where I need to
+  install Python on my CI server, which I name, appropriately,
+  minecraft.
+
+  Notice the directory that I will run these commands.
+  This initial slash and final colon will have all code blocks
+  in this section
+  use Tramp to run on my remote server.
+
+  Seriously cool. Let me prove it.
+
+                          *Enter code block*
+
+  We’ll just run the hostname command...
+
+  And hit C-c C-c to kick it off...
+
+                              *C-c C-c*
+
+  Here we go. Creating an SSH tunnel, copying this source block as a script.
+  Running it, and copying the results back.
+
+  Booyah.
+
+  Hrm. Seems like I haven’t set up the domain name on that server yet.
+
+  Let’s keep going and let’s see what packages are already installed.
+
+                          *Enter code block*
+
+  This system is Debian based, and I want just the python-related packages
+  that are actually installed.
+  Yeah, icky command line.
+
+  Let’s see what we get:
+
+                              *C-c C-c*
+
+  Would be nice to put the output in a table, and
+  strip off the word =install= from the end.
+
+                         *Enter sed command*
+
+  I know that appending more commands is the unix-way...
+  But Babel has a different way if all we care about is formatting the results.
+
+  First, I’m going to create a new source code block.
+  That I call column1
+  This time the language is Lisp.
+  Clearly, this part will be better now, right?
+  This expects a variable named =data= (which I’ll just leave blank)
+
+  Data will be a list of lists, so running this through a mapcar where
+  the function is car, means, I’m just going to be getting the first
+  entry of each list.
+
+  See where I’m going with this?
+
+  Now, let’s get rid of that extra bit, and add a “post” header that
+  calls my column1 source code block, and sets data to be this.
+  This is a magical bit that assigns the output from the source code block.
+
+  One last change is to set the output to a =list= instead of the
+  table that we’ve been doing.
+
+                    *Move to RESULTS and hit tab*
+
+  Clearly, this column1 code block of Lispy goodness isn’t something
+  that we actually want exported.
+  The org-mode Babel project has a concept called the Tower of Babel
+  Where you can create org-mode files with these sorts of blocks
+  And they can be accessible in every other file.
+
+  Let me load one of my personal Tower files.
+
+                       *C-x C-f to load tables.org*
+
+  The really nice feature, is that you can open up a can of literate
+  programming on this stuff, to test and describe it well.
+
+  I created a this “table-filter” to both filter and format shell
+  string output.
+
+                       *fancy-narrow-to-defun*
+
+  To specify that this file is part of the Tower of Babel and should
+  be accessible, I type =C-c C-v i= ... and select the file to be added.
+
+                        *C-c C-v i: Load file*
+
+  Notice that this block takes multiple parameters.
+  Let’s go back to my Sprint page to see how I use it.
+
+                               *C-x b*
+
+  The =post= header calls that =table-filter= block, but let’s me
+  include and exclude regular expression filters. My shell code is now
+  really simple (assuming this is what I want to export).
+
+                              *C-c C-c*
+
+  Now I am back to my table.
+  If you are wondering if we could use our =column1= code in
+  conjunction with this table-filter code, you’d be correct.
+
+                         *add the extra code*
+
+  Let’s run this code now:
+
+                              *C-c C-c*
+
+  And we’ve accomplished the same thing.
+
+                    *C-x b: Go back to Presentation*

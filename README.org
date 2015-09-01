@@ -1,0 +1,15 @@
+#+TITLE:  Literate Devops Presentation
+#+AUTHOR: Howard Abrams
+#+EMAIL:  howard.abrams@gmail.com
+#+DATE:   2015 Aug 31
+#+TAGS:   technical emacs
+
+This contains my demonstration on Literate Devops that I gave at
+EmacsConf 2015.
+
+I believe what most people, who view [[http://youtu.be/dljNabciEGg][the online video]] are most
+interested in, is the =sprint-fuzzy-bunny.org= file that I created
+during the demonstration.
+
+If you are interested in how I typed so fast, grab =demo-it= from
+MELPA, and try running the =literate-devops-demo.el= script. YMMV.

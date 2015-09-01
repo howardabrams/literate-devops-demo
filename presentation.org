@@ -1,0 +1,186 @@
+‘#+TITLE:  Literate Devops
+#+AUTHOR: Howard Abrams
+#+EMAIL:  howard.abrams@gmail.com
+#+DATE:   2015 Aug 08
+#+TAGS:   emacs lp org
+
+See the [[file:presentation-notes.org][Presenter's Notes]] for details about each frame.
+
+* Literate Programming
+
+  - First invented by Donald Knuth in 1980’s
+
+  - Inverted style from “code” peppered with comments
+
+  - Emphasize communication to people / team
+
+                                  “Let us change our traditional attitude to
+                                   the construction of programs. Instead of
+                                   imagining that our main task is to instruct
+                                   a computer what to do, let us concentrate
+                                   rather on explaining to human beings what
+                                   we want a computer to do.”  —[[http://www.brainyquote.com/quotes/authors/d/donald_knuth.html#0RwBBIoWjqiKPb2Y.99][Donald Knuth]]
+
+* Literate Programming
+
+  What if it was possible?
+
+  [[file:literate-programming-tangling.png]]
+
+* Org Mode
+
+  - Great at thought collection and organization
+    - Love the hyperlinks
+    - Rich system builds on small, simple parts
+
+  - Fully functional literate programming model
+
+  - Execute code from within the document
+
+  - Weave code from multiple languages
+
+                            “In the third millennium, does it still make sense
+                             to work with text files? Text files are the only truly
+                             portable format for files. The data will never get
+                             lost.”  —[[http://transcriptvids.com/v/oJTwQvgfgMM.html][Carsten Dominik]]
+
+* Literate Devops
+
+                              “A literate program provides an unambiguous
+                               place to start with an unfamiliar code base
+                               and a direction to go.”  —[[http://www.shanecelis.com/2013/05/20/why-im-trying-literate-programming/][Shane Celis]]
+
+  - System administration and devops is very unfamiliar
+
+  - I felt that structure and clarity would help
+
+  - Questions to team-mates required more context/background.
+
+
+                                         Started applying literate programming to devops.
+
+* Demonstration
+
+
+
+                The best way to explain literate programming,
+
+                           is to demonstrate literate programming.
+
+* Warning
+
+  - Everything I’m about to show is built into Emacs!
+  - However, *how* I show it might not...
+    - Following is a “day in my life” ... I’ll type fast so you don’t have to wait. ☺
+    - Wrote [[https://github.com/howardabrams/demo-it][demo-it]] to help create these demonstrations (on MELPA)
+
+  - M-s h r 	:: highlight-regexp
+  - M-s h u 	:: unhighlight-regexp
+  - M-s h . 	:: highlight-symbol-at-point
+  - [[http://emacswiki.org/emacs/Yasnippet][yasnippet]] 	:: auto inserting text
+
+  - Using: [[https://github.com/sabof/org-bullets][org-bullets]] and [[http://www.jonnay.net/bloggity-blog/2014/12/29_making-org-mode-typography-suck-a-little-less.html][org-beautify-theme]]
+  - Font: [[http://adobe-fonts.github.io/source-code-pro/][Source Code Pro]] and [[http://adobe-fonts.github.io/source-sans-pro/][Source Sans Pro]]
+  - Colors: [[http://emacsthemes.caisah.info/sanityinc-tomorrow-themes/][Sanityinc’s Tomorrow Night]]
+  - Modeline: [[https://github.com/milkypostman/powerline][Powerline]] ... all described in my [[https://github.com/howardabrams/dot-files][dot-files]] collection on Github.
+
+* Emphasize Communication
+
+  - Use [[https://github.com/magnars/expand-region.el][expand-region]] to select section
+         Or: =C-x n s= for org-narrow-to-subtree
+
+  - Use org-mime-org-buffer-htmlize to send email
+         (located in [[http://orgmode.org/elpa.html][org-plus-contrib]] package)
+
+  - Others ox packages export to wikis, chats, Slack, etc.
+
+  - Write in past tense
+
+  - Use org-mode headers and properties to keep
+     clutter from the source code blocks
+
+* Remote Access
+
+** Is it Slow?
+
+   - Use a session property:
+
+     :PROPERTIES:
+     :session:  my-server-session
+     :results:  output
+     :END:
+
+   - View the session buffer
+     #+BEGIN_SRC sh :dir /minecraft.howardabrams.com:
+       hostname -i
+     #+END_SRC
+
+     #+RESULTS:
+     : 127.0.1.1
+
+
+
+
+
+
+
+** Remote Access with TRAMP
+
+   We often have to deal with files on a remote system. These two can
+   be edited as easy as a clicking [[/goblin.howardabrams.com:howardism/index.html][a hyperlink]].
+
+   Written as: /goblin.howardabrams.com:website/index.html
+                     ↑                   ↑                    ↑            ↑
+             Initial slash    hostname          colon   path to file
+
+** Access Hosts behind Firewalls
+
+   Systems in my data center require a bastion AND jump box to get to
+   the host that I want:
+
+   [[file:tramp-url-1.png]]
+
+** Access Files as Root
+
+   One Tramp ‘protocol’ is sudo ...
+
+   [[/ssh:minecraft.howardabrams.com|sudo:minecraft.howardabrams.com:/etc/passwd]]
+     ↑                                                       ↑
+   Start with                                         New
+   Protocol                                        Protocol
+
+* Questions?
+
+  Post-presentation Linkage:
+
+  - http://howardism.org/Technical/Emacs/literate-devops.html
+    (or: http://bit.ly/1fchhRR)
+    My initial essay that started this presentation
+
+  - http://github.com/howardabrams/demo-it
+    Emacs code used to make this demonstration
+    Find it on MELPA:  demo-it
+
+  - http://github.com/howardabrams/dot-files
+    Contains all my Emacs configuration file
+
+* Technical Details
+
+  #+BEGIN_SRC dot :file literate-programming-tangling.png :cmdline -Kdot -Tpng :exports results
+  digraph G {
+    bgcolor="transparent"
+    node [style=filled, fillcolor=white, fontsize=32, fontname="Chalkboard-bold"]
+
+    ORG  [label="Markdown File"]
+    HTML [label="PDF / HTML"]
+    SRC  [label="Source Code"]
+
+    ORG -> HTML [ color=white ]
+    ORG -> SRC  [ color=white ]
+  }
+  #+END_SRC
+
+  #+RESULTS:
+  [[file:literate-programming-tangling.png]]
+
+#+STARTUP: inlineimages yes

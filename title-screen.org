@@ -1,0 +1,12 @@
+* Literate Devops
+
+
+
+                          Literate Programming
+                                        in a
+                       World of Command Lines
+
+
+
+****                                        —Howard Abrams
+                                           @howardabrams
